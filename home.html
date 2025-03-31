@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>八字五行分析</title>
+    <style>
+        body {
+            font-family: Arial, "Microsoft YaHei", sans-serif;
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .input-group {
+            margin: 15px 0;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input, select {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            display: none;
+        }
+        .element-count {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+        }
+        .element-item {
+            flex: 1;
+            min-width: 100px;
+            margin: 5px;
+            padding: 10px;
+            text-align: center;
+            background-color: #f8f8f8;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>八字五行分析</h1>
+        <div class="input-group">
+            <label for="birthdate">出生日期：</label>
+            <input type="date" id="birthdate" required>
+        </div>
+        <div class="input-group">
+            <label for="birthtime">出生時辰：</label>
+            <select id="birthtime">
+                <option value="子">子時 (23:00-1:00)</option>
+                <option value="丑">丑時 (1:00-3:00)</option>
+                <option value="寅">寅時 (3:00-5:00)</option>
+                <option value="卯">卯時 (5:00-7:00)</option>
+                <option value="辰">辰時 (7:00-9:00)</option>
+                <option value="巳">巳時 (9:00-11:00)</option>
+                <option value="午">午時 (11:00-13:00)</option>
+                <option value="未">未時 (13:00-15:00)</option>
+                <option value="申">申時 (15:00-17:00)</option>
+                <option value="酉">酉時 (17:00-19:00)</option>
+                <option value="戌">戌時 (19:00-21:00)</option>
+                <option value="亥">亥時 (21:00-23:00)</option>
+            </select>
+        </div>
+        <button onclick="calculate()">計算五行</button>
+        
+        <div id="result" class="result">
+            <h2>您的八字：<span id="bazi"></span></h2>
+            <h3>五行統計：</h3>
+            <div class="element-count">
+                <div class="element-item">
+                    <div>金</div>
+                    <div id="metal-count">0</div>
+                </div>
+                <div class="element-item">
+                    <div>木</div>
+                    <div id="wood-count">0</div>
+                </div>
+                <div class="element-item">
+                    <div>水</div>
+                    <div id="water-count">0</div>
+                </div>
+                <div class="element-item">
+                    <div>火</div>
+                    <div id="fire-count">0</div>
+                </div>
+                <div class="element-item">
+                    <div>土</div>
+                    <div id="earth-count">0</div>
+                </div>
+            </div>
+            <h3>分析結果：</h3>
+            <p id="analysis"></p>
+        </div>
+    </div>
+
+    <script>
+        const heavenlyStems = ['甲', '乙', '丙', '丁', '戊', '己', '庚', '辛', '壬', '癸'];
+        const earthlyBranches = ['子', '丑', '寅', '卯', '辰', '巳', '午', '未', '申', '酉', '戌', '亥'];
+        
+        const elementMap = {
+            '甲': '木', '乙': '木',
+            '丙': '火', '丁': '火',
+            '戊': '土', '己': '土',
+            '庚': '金', '辛': '金',
+            '壬': '水', '癸': '水',
+            '子': '水', '丑': '土',
+            '寅': '木', '卯': '木',
+            '辰': '土', '巳': '火',
+            '午': '火', '未': '土',
+            '申': '金', '酉': '金',
+            '戌': '土', '亥': '水'
+        };
+
+        function getHeavenlyStem(year) {
+            return heavenlyStems[(year - 4) % 10];
+        }
+
+        function getEarthlyBranch(year) {
+            return earthlyBranches[(year - 4) % 12];
+        }
+
+        function calculate() {
+            const birthdate = new Date(document.getElementById('birthdate').value);
+            const birthtime = document.getElementById('birthtime').value;
+            
+            if (!birthdate) {
+                alert('請選擇出生日期！');
+                return;
+            }
+
+            const year = birthdate.getFullYear();
+            const yearStem = getHeavenlyStem(year);
+            const yearBranch = getEarthlyBranch(year);
+            
+            // 簡化版的八字計算
+            const bazi = `${yearStem}${yearBranch}`;
+            document.getElementById('bazi').textContent = bazi;
+
+            // 計算五行
+            const elements = new Map([
+                ['金', 0], ['木', 0], ['水', 0], ['火', 0], ['土', 0]
+            ]);
+
+            // 計算天干的五行
+            elements.set(elementMap[yearStem], elements.get(elementMap[yearStem]) + 1);
+            
+            // 計算地支的五行
+            elements.set(elementMap[yearBranch], elements.get(elementMap[yearBranch]) + 1);
+            
+            // 計算時辰的五行
+            elements.set(elementMap[birthtime], elements.get(elementMap[birthtime]) + 1);
+
+            // 更新顯示
+            document.getElementById('metal-count').textContent = elements.get('金');
+            document.getElementById('wood-count').textContent = elements.get('木');
+            document.getElementById('water-count').textContent = elements.get('水');
+            document.getElementById('fire-count').textContent = elements.get('火');
+            document.getElementById('earth-count').textContent = elements.get('土');
+
+            // 分析缺少的五行
+            let missing = [];
+            elements.forEach((count, element) => {
+                if (count === 0) {
+                    missing.push(element);
+                }
+            });
+
+            // 顯示分析結果
+            let analysis = '';
+            if (missing.length > 0) {
+                analysis = `您的八字中缺少：${missing.join('、')}`;
+            } else {
+                analysis = '您的八字中五行俱全，沒有缺少的元素。';
+            }
+            document.getElementById('analysis').textContent = analysis;
+
+            // 顯示結果區域
+            document.getElementById('result').style.display = 'block';
+        }
+    </script>
+</body>
+</html>
